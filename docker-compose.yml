@@ -7,26 +7,28 @@ services:
     ports:
       - "32801:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD="${ROOT}"
       - MYSQL_DATABASE=accountManagement
-      - MYSQL_USER=
-      - MYSQL_PASSWORD=
+      - MYSQL_USER="${USERNAME}"
+      - MYSQL_PASSWORD="${PASSWORD}"
     container_name: account-management-db
     volumes:
       - mysql-account-management-data:/var/lib/mysql
+    env_file: .env
 
   account-management-test-db:
     image: "mysql:8.0.19"
     ports:
       - "32802:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD="${ROOT}"
       - MYSQL_DATABASE=accountManagementTests
-      - MYSQL_USER=
-      - MYSQL_PASSWORD=
+      - MYSQL_USER="${USERNAME}"
+      - MYSQL_PASSWORD="${PASSWORD}"
     container_name: account-management-testdb
     volumes:
       - mysql-account-management-test-data:/var/lib/mysql
+    env_file: .env
 
 volumes:
   mysql-account-management-data:
