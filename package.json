@@ -1,0 +1,15 @@
+{
+  "name": "user-account-api",
+  "version": "1.0.0",
+  "description": "api to manage user accounts, security, login and logout functionality",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
+  },
+  "author": "Ajay Mungur",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

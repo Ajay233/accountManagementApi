@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+
+  account-management-db:
+    image: "mysql:8.0.19"
+    ports:
+      - "32801:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=accountManagement
+      - MYSQL_USER=
+      - MYSQL_PASSWORD=
+    container_name: account-management-db
+    volumes:
+      - mysql-account-management-data:/var/lib/mysql
+
+  account-management-test-db:
+    image: "mysql:8.0.19"
+    ports:
+      - "32802:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=accountManagementTests
+      - MYSQL_USER=
+      - MYSQL_PASSWORD=
+    container_name: account-management-testdb
+    volumes:
+      - mysql-account-management-test-data:/var/lib/mysql
+
+volumes:
+  mysql-account-management-data:
+  mysql-account-management-test-data:
