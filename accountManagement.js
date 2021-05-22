@@ -118,6 +118,30 @@ router.delete(`${baseUrl}/deleteAccount`, (req, resp) => {
   })()
 })
 
+router.post(`${baseUrl}/signIn`, (req, resp) => {
+  // Validate incoming req fields
+  // Find user in DB via email
+  (async () => {
+    const user = await model.Users.findAll({
+      where: {
+        email: req.body.email
+      }
+    });
+
+    if(user.length > 0){
+      bcrypt.compare(req.body.password, user[0].password).then((result) => {
+        if(result === true){
+          resp.status(200).send(user[0])
+        } else {
+          resp.status(400).send("Password does not match")
+        }
+      })
+    } else {
+      resp.status(400).send("No account found matching the supplied email")
+    }
+  })()
+})
+
 // Change password
 
 // Update permission
