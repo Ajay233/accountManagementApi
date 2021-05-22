@@ -30,5 +30,21 @@ module.exports = {
     } else {
       return true
     }
+  },
+  changePassword: (req) => {
+    const { id, currentPassword, newPassword } = req.body
+    let idValid = id !== null && id !== "";
+    let currentPasswordValid = currentPassword !== null && currentPassword !== "";
+    let newPasswordValid = newPassword !== null && newPassword !== "";
+
+    if(!idValid){
+      return "Invalid ID format"
+    } else if(!currentPasswordValid){
+      return "Current password format invalid"
+    } else if(!newPasswordValid){
+      return "New password format invalid"
+    } else {
+      return true
+    }
   }
 }

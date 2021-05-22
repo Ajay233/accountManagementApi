@@ -121,7 +121,7 @@ router.delete(`${baseUrl}/deleteAccount`, (req, resp) => {
   })()
 })
 
-// Sign In 
+// Sign In
 router.post(`${baseUrl}/signIn`, (req, resp) => {
   let validationResult = validators.signUpValidation(req)
   if(validationResult === true){
@@ -150,6 +150,46 @@ router.post(`${baseUrl}/signIn`, (req, resp) => {
 })
 
 // Change password
+router.put(`${baseUrl}/changePassword`, (req, resp) => {
+  // validate fields
+  let validationResult = validators.changePassword(req);
+  if(validationResult === true){
+    (async () => {
+      // find user by id, send bad resposne if not found
+      const user = await model.Users.findAll({
+        where: {
+          id: req.body.id
+        }
+      })
+
+      if(user.length > 0){
+        // compare current password to password in db, send bad resposne if no match
+        bcrypt.compare(req.body.currentPassword, user[0].password).then((result) => {
+          if(result === true){
+            // bcrypt the new password
+            bcrypt.hash(req.body.newPassword, saltRounds).then((hashedPassword) => {
+              user[0].password = hashedPassword;
+              (async () => {
+                await user[0].save({ fields: ['password'] })
+                await user[0].reload();
+              })().then(() => {
+                resp.status(200).send("Password changed")
+              }).catch((error) => {
+                console.log(error)
+              })
+            });
+          } else {
+            resp.status(400).send("Invalid current password provided")
+          }
+        })
+      } else {
+        resp.status(400).send("Can not update password, account not found")
+      }
+    })()
+  } else {
+    resp.status(400).send(validationResult)
+  }
+})
 
 // Update permission
 
