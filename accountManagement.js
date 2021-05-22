@@ -4,6 +4,7 @@ const model = require('./models/index.js')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const baseUrl = '/accountManagementApi'
+const validators = require('./validations.js')
 
 // Get user details for a specified user
 router.get(`${baseUrl}/getUserDetails`, (req, resp) => {
@@ -27,32 +28,34 @@ router.get(`${baseUrl}/getUserDetails`, (req, resp) => {
 
 // Create a user account
 router.post(`${baseUrl}/newAccount`, (req, resp) => {
-  bcrypt.hash(req.body.password, saltRounds).then((hashedPassword) => {
-    (async () => {
-      try {
-        // Will need to create a function to cycle through the request and validate
-        // the fields are filled out correctly and none are null or empty strings otherwise throw an error
-        const newUser = await model.Users.create({
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          password: hashedPassword,
-          avatarUrl: req.body.avatarUrl,
-          email: req.body.email,
-          permission: req.body.permission ? req.body.permission : "user",
-          verified: req.body.verified ? req.body.verified : true
-        })
-        resp.status(200).send(newUser.toJSON())
-      } catch(error){
-        if(error.name === "SequelizeUniqueConstraintError"){
-          resp.status(400).send("An account with that email already exists")
-        } else {
-          console.log(error)
-          resp.status(400).send("Something went wrong, please check the fields you provided and try again")
+  let validationResult = validators.userAccountValidation(req);
+  if(validationResult === true){
+    bcrypt.hash(req.body.password, saltRounds).then((hashedPassword) => {
+      (async () => {
+        try {
+          const newUser = await model.Users.create({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            password: hashedPassword,
+            avatarUrl: req.body.avatarUrl,
+            email: req.body.email,
+            permission: req.body.permission ? req.body.permission : "user",
+            verified: req.body.verified ? req.body.verified : true
+          })
+          resp.status(200).send(newUser.toJSON())
+        } catch(error){
+          if(error.name === "SequelizeUniqueConstraintError"){
+            resp.status(400).send("An account with that email already exists")
+          } else {
+            console.log(error)
+            resp.status(400).send("Something went wrong, please check the fields you provided and try again")
+          }
         }
-      }
-    })()
-  })
-
+      })()
+    })
+  } else {
+    resp.status(400).send(validationResult)
+  }
 })
 
 // Update a user account
@@ -118,28 +121,32 @@ router.delete(`${baseUrl}/deleteAccount`, (req, resp) => {
   })()
 })
 
+// Sign In 
 router.post(`${baseUrl}/signIn`, (req, resp) => {
-  // Validate incoming req fields
-  // Find user in DB via email
-  (async () => {
-    const user = await model.Users.findAll({
-      where: {
-        email: req.body.email
-      }
-    });
-
-    if(user.length > 0){
-      bcrypt.compare(req.body.password, user[0].password).then((result) => {
-        if(result === true){
-          resp.status(200).send(user[0])
-        } else {
-          resp.status(400).send("Password does not match")
+  let validationResult = validators.signUpValidation(req)
+  if(validationResult === true){
+    (async () => {
+      const user = await model.Users.findAll({
+        where: {
+          email: req.body.email
         }
-      })
-    } else {
-      resp.status(400).send("No account found matching the supplied email")
-    }
-  })()
+      });
+
+      if(user.length > 0){
+        bcrypt.compare(req.body.password, user[0].password).then((result) => {
+          if(result === true){
+            resp.status(200).send(user[0])
+          } else {
+            resp.status(400).send("Password does not match")
+          }
+        })
+      } else {
+        resp.status(400).send("No account found matching the supplied email")
+      }
+    })()
+  } else {
+    resp.status(400).send(validationResult)
+  }
 })
 
 // Change password
