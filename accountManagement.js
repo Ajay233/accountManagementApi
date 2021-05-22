@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const model = require('./models/index.js')
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const baseUrl = '/accountManagementApi'
 
 // Get user details for a specified user
@@ -25,28 +27,32 @@ router.get(`${baseUrl}/getUserDetails`, (req, resp) => {
 
 // Create a user account
 router.post(`${baseUrl}/newAccount`, (req, resp) => {
-  (async () => {
-    try {
-      // Will need to create a function to cycle through the request and validate
-      // the fields are filled out correctly and none are null or empty strings otherwise throw an error
-      const newUser = await model.Users.create({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        password: req.body.password,
-        avatarUrl: req.body.avatarUrl,
-        email: req.body.email,
-        permission: req.body.permission ? req.body.permission : "user",
-        verified: req.body.verified ? req.body.verified : true
-      })
-      resp.status(200).send(newUser.toJSON())
-    } catch(error){
-      if(error.name === "SequelizeUniqueConstraintError"){
-        resp.status(400).send("An account with that email already exists")
-      } else {
-        resp.status(400).send("Something went wrong, please check the fields you provided and try again")
+  bcrypt.hash(req.body.password, saltRounds).then((hashedPassword) => {
+    (async () => {
+      try {
+        // Will need to create a function to cycle through the request and validate
+        // the fields are filled out correctly and none are null or empty strings otherwise throw an error
+        const newUser = await model.Users.create({
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          password: hashedPassword,
+          avatarUrl: req.body.avatarUrl,
+          email: req.body.email,
+          permission: req.body.permission ? req.body.permission : "user",
+          verified: req.body.verified ? req.body.verified : true
+        })
+        resp.status(200).send(newUser.toJSON())
+      } catch(error){
+        if(error.name === "SequelizeUniqueConstraintError"){
+          resp.status(400).send("An account with that email already exists")
+        } else {
+          console.log(error)
+          resp.status(400).send("Something went wrong, please check the fields you provided and try again")
+        }
       }
-    }
-  })()
+    })()
+  })
+
 })
 
 // Update a user account
