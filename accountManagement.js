@@ -16,6 +16,7 @@ router.get(`${baseUrl}/getUserDetails`, (req, resp) => {
         }
       });
       if(user.length > 0){
+        user[0].password = ""
         resp.status(200).send(user[0])
       } else{
         throw new Error("User not found")
@@ -42,7 +43,8 @@ router.post(`${baseUrl}/newAccount`, (req, resp) => {
             permission: req.body.permission ? req.body.permission : "user",
             verified: req.body.verified ? req.body.verified : true
           })
-          resp.status(200).send(newUser.toJSON())
+          newUser.password = ""
+          resp.status(200).send(newUser)
         } catch(error){
           if(error.name === "SequelizeUniqueConstraintError"){
             resp.status(400).send("An account with that email already exists")
@@ -84,6 +86,7 @@ router.put(`${baseUrl}/updateAccountDetails`, (req, resp) => {
             id: req.body.id
           }
         });
+        updatedUser[0].password = ""
         resp.status(200).send(updatedUser[0])
       } else {
         throw new Error("Can not update account, account not found")
@@ -135,6 +138,7 @@ router.post(`${baseUrl}/signIn`, (req, resp) => {
       if(user.length > 0){
         bcrypt.compare(req.body.password, user[0].password).then((result) => {
           if(result === true){
+            user[0].password = ""
             resp.status(200).send(user[0])
           } else {
             resp.status(400).send("Password does not match")
@@ -207,6 +211,7 @@ router.put(`${baseUrl}/setPermission`, (req, resp) => {
         (async () => {
           await user[0].save({ fields: ['permission'] })
           await user[0].reload();
+          user[0].password = ""
         })().then(() => {
           resp.status(200).send(user[0])
         }).catch((error) => {
@@ -237,6 +242,7 @@ router.put(`${baseUrl}/setVerified`, (req, resp) => {
         (async () => {
           await user[0].save({ fields: ['verified'] })
           await user[0].reload()
+          user[0].password = ""
         })().then(() => {
           resp.status(200).send(user[0])
         }).catch((error) => {
