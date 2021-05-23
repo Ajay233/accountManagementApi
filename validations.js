@@ -59,5 +59,19 @@ module.exports = {
     } else {
       return true
     }
+  },
+  setVerified: (req) => {
+    const { id, verified } = req.body
+    let idValid = id !== null && id !== "";
+    let verifiedValid = typeof verified === "boolean" && verified !== null && verified !== "";
+
+    if(!idValid){
+      return "Invalid ID format"
+    } else if(!verifiedValid){
+      return "Invalid verified format"
+    } else {
+      return true
+    }
+
   }
 }

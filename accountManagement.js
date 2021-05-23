@@ -222,5 +222,33 @@ router.put(`${baseUrl}/setPermission`, (req, resp) => {
 })
 
 // Update verified
+router.put(`${baseUrl}/setVerified`, (req, resp) => {
+  let validationResult = validators.setVerified(req)
+  if(validationResult === true){
+    (async () => {
+      const user = await model.Users.findAll({
+        where: {
+          id: req.body.id
+        }
+      })
+
+      if(user.length > 0){
+        user[0].verified = req.body.verified;
+        (async () => {
+          await user[0].save({ fields: ['verified'] })
+          await user[0].reload()
+        })().then(() => {
+          resp.status(200).send(user[0])
+        }).catch((error) => {
+          resp.status(400).send(error)
+        })
+      } else {
+        resp.status(400).send("Can not update verified status, account not found")
+      }
+    })()
+  } else {
+    resp.status(400).send(validationResult)
+  }
+})
 
 module.exports = router;
