@@ -46,5 +46,18 @@ module.exports = {
     } else {
       return true
     }
+  },
+  setPermission: (req) => {
+    const { id, permission } = req.body
+    let idValid = id !== null && id !== "";
+    let permissionValid = permission !== null && permission !== "";
+
+    if(!idValid){
+      return "Invalid ID format"
+    } else if(!permissionValid){
+      return "Invalid permission format"
+    } else {
+      return true
+    }
   }
 }

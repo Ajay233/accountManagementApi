@@ -192,6 +192,34 @@ router.put(`${baseUrl}/changePassword`, (req, resp) => {
 })
 
 // Update permission
+router.put(`${baseUrl}/setPermission`, (req, resp) => {
+  let validationResult = validators.setPermission(req)
+  if(validationResult === true){
+    (async () => {
+      const user = await model.Users.findAll({
+        where: {
+          id: req.body.id
+        }
+      })
+
+      if(user.length > 0){
+        user[0].permission = req.body.permission;
+        (async () => {
+          await user[0].save({ fields: ['permission'] })
+          await user[0].reload();
+        })().then(() => {
+          resp.status(200).send(user[0])
+        }).catch((error) => {
+          resp.status(400).send(error)
+        })
+      } else {
+        resp.status(400).send("Can not update permission, account not found")
+      }
+    })()
+  } else {
+    resp.status(400).send(validationResult)
+  }
+})
 
 // Update verified
 
