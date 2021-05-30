@@ -3,9 +3,15 @@
   "version": "1.0.0",
   "description": "api to manage user accounts, security, login and logout functionality",
   "main": "index.js",
+  "jest": {
+    "globalSetup": "./tests/testDbInitialisation.js",
+    "setupFilesAfterEnv": ["./tests/config.js"]
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ."
+    "start": "NODE_ENV=production node .",
+    "dev": "NODE_ENV=development node .",
+    "test": "NODE_ENV=test jest"
   },
   "author": "Ajay Mungur",
   "license": "ISC",
@@ -17,6 +23,7 @@
     "sequelize": "^6.6.2"
   },
   "devDependencies": {
+    "jest": "^26.6.3",
     "sequelize-cli": "^6.2.0"
   }
 }
