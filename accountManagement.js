@@ -43,6 +43,7 @@ router.post(`${baseUrl}/newAccount`, (req, resp) => {
             permission: req.body.permission ? req.body.permission : "user",
             verified: req.body.verified ? req.body.verified : true
           })
+          await model.sequelize.close()
           newUser.password = ""
           resp.status(200).send(newUser)
         } catch(error){

@@ -7,10 +7,10 @@ services:
     ports:
       - "32801:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD="${ROOT}"
+      - MYSQL_ROOT_PASSWORD=${ROOT}
       - MYSQL_DATABASE=accountManagement
-      - MYSQL_USER="${USERNAME}"
-      - MYSQL_PASSWORD="${PASSWORD}"
+      - MYSQL_USER=${USERNAME}
+      - MYSQL_PASSWORD=${PASSWORD}
     container_name: account-management-db
     volumes:
       - mysql-account-management-data:/var/lib/mysql
@@ -21,10 +21,10 @@ services:
     ports:
       - "32802:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD="${ROOT}"
+      - MYSQL_ROOT_PASSWORD=${ROOT}
       - MYSQL_DATABASE=accountManagementTests
-      - MYSQL_USER="${USERNAME}"
-      - MYSQL_PASSWORD="${PASSWORD}"
+      - MYSQL_USER=${USERNAME}
+      - MYSQL_PASSWORD=${PASSWORD}
     container_name: account-management-testdb
     volumes:
       - mysql-account-management-test-data:/var/lib/mysql

@@ -1,4 +1,7 @@
 const model = require('../models/index.js');
+const request = require('supertest');
+const http = require('../app.js')
+const assert = require('assert')
 
 const initialiseUserTable = async () => {
   await model.Users.drop();
@@ -18,7 +21,19 @@ afterEach(async () => {
 
 describe('Account management', () => {
   describe('New account endpoint', () => {
-    it('should create a new account', () => {
+    it('should create a new account', async (done) => {
+      const res = await request(http)
+      .post('/accountManagementApi/newAccount')
+      .send({
+        "firstName": "Jo",
+        "lastName": "Bloggs",
+        "password": "testPassword",
+        "avatarUrl": "test",
+        "email": "test@test.com"
+      })
+
+      expect(res.status).toEqual(200)
+      expect(res.body.firstName).toEqual("Jo")
 
     })
   })
