@@ -34,6 +34,12 @@ describe('Account management', () => {
 
       expect(res.status).toEqual(200)
       expect(res.body.firstName).toEqual("Jo")
+      expect(res.body.lastName).toEqual("Bloggs")
+      expect(res.body.nickName).toEqual(null)
+      expect(res.body.password).toEqual("")
+      expect(res.body.avatarUrl).toEqual("test")
+      expect(res.body.email).toEqual("test@test.com")
+      done();
 
     })
   })

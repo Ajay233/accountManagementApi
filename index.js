@@ -1,6 +1,9 @@
 const http = require('./app.js')
 const port = process.env.PORT || 8090;
+const migrationRunner = require('./utils/migrationRunner.js')
 
-http.listen(port, () => {
-  console.log("App started on port 8090");
+migrationRunner.migrate().then(() => {
+  http.listen(port, () => {
+    console.log("App started on port 8090");
+  })
 })

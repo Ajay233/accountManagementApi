@@ -37,13 +37,13 @@ router.post(`${baseUrl}/newAccount`, (req, resp) => {
           const newUser = await model.Users.create({
             firstName: req.body.firstName,
             lastName: req.body.lastName,
+            nickName: req.body.nickName ? req.body.nickName : null,
             password: hashedPassword,
             avatarUrl: req.body.avatarUrl,
             email: req.body.email,
             permission: req.body.permission ? req.body.permission : "user",
             verified: req.body.verified ? req.body.verified : true
           })
-          await model.sequelize.close()
           newUser.password = ""
           resp.status(200).send(newUser)
         } catch(error){
@@ -75,6 +75,7 @@ router.put(`${baseUrl}/updateAccountDetails`, (req, resp) => {
         await model.Users.update({
           firstName: req.body.firstName,
           lastName: req.body.lastName,
+          nickName: req.body.nickName,
           avatarUrl: req.body.avatarUrl,
           email: req.body.email
         }, {

@@ -21,8 +21,7 @@ You need to have the following installed:
 These should be the credentials you want to use once the DB is created.
 
 5. Run `docker-compose up -d` to start up the DB
-6. Run `npx sequelize db:migrate` to run all of the DB migrations
-7. Run `npm start` to start the server
+6. Run `npm run dev` to run the database migrations and start development the server. 
 
 When you want to close the app down:
 - Press `ctrl` + `c` to stop the server

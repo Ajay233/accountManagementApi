@@ -1,6 +1,3 @@
-const {exec} = require('child_process');
+const migrationRunner = require('../utils/migrationRunner.js')
 
-module.exports = async () => {
-  const { stdout, stderr } = await exec('sequelize db:migrate');
-  stdout ? console.log("Migration completed") : console.error('stderr:', stderr);
-}
+module.exports = migrationRunner.migrate
