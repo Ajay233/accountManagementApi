@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "api to manage user accounts, security, login and logout functionality",
   "main": "index.js",
+  "engines": {
+    "node": "10.13.0",
+    "npm": "6.4.1"
+  },
   "jest": {
     "globalSetup": "./tests/testDbInitialisation.js",
     "setupFilesAfterEnv": [
